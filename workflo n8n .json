@@ -1,0 +1,62 @@
+{
+  "name": "Les Eveilles - Simple Version",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "1",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [200, 300]
+    },
+    {
+      "parameters": {
+        "keepOnlySet": true,
+        "values": {
+          "string": [
+            { "name": "selected_episode_id", "value": "E01" },
+            { "name": "provider_video", "value": "RUNWAY" },
+            { "name": "locked_json_path", "value": "/home/n8n/data/serie_youtube_global_master_v3.json" },
+            { "name": "output_root", "value": "/home/n8n/data/output" },
+            { "name": "video_render_proxy_url", "value": "http://127.0.0.1:8787/render-video" }
+          ],
+          "number": [
+            { "name": "default_seed", "value": 12345 }
+          ]
+        }
+      },
+      "id": "2",
+      "name": "Set Controls",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [400, 300]
+    },
+    {
+      "parameters": {
+        "language": "javaScript",
+        "jsCode": "const fs = require('fs');\nconst data = JSON.parse(fs.readFileSync($json.locked_json_path, 'utf8'));\nreturn [{ json: data }];"
+      },
+      "id": "3",
+      "name": "Load JSON",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [600, 300]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          { "node": "Set Controls", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Set Controls": {
+      "main": [
+        [
+          { "node": "Load JSON", "type": "main", "index": 0 }
+        ]
+      ]
+    }
+  }
+}
